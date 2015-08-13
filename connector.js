@@ -16,7 +16,27 @@ var Connector = function(config) {
   };
 
   process.on('uncaughtException', consoleError);
-  conx.on('notReady', consoleError);
+  conx.on('notReady', function(data) {
+    if(config.uuid == "uuid-here"){
+      conx.register({
+        "type": "edison"
+      }, function(data) {
+        debug('registered device', data);
+        config.uuid = data.uuid;
+        config.token = data.token;
+        fs.writeFile('meshblu.json', JSON.stringify(config), function(err) {
+          if (err) return;
+        });
+      });
+
+      conx.authenticate({
+        "uuid": config.uuid,
+        "token": config.token
+      }, function(data) {
+        debug('authenticating', data);
+      });
+    }
+  });
   conx.on('error', consoleError);
 
   var plugin = new Plugin();

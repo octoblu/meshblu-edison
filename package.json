@@ -1,10 +1,11 @@
 {
   "name": "meshblu-edison",
   "repository": "octoblu/meshblu-edison",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "scripts": {
     "start": "node command.js",
-    "test": "exit 0"
+    "test": "exit 0",
+    "main": "main.js"
   },
   "dependencies": {
     "debug": "^2.1.3",

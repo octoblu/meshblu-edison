@@ -89,7 +89,6 @@ var OPTIONS_SCHEMA =  {
         },
         "required": [
           "name",
-          "pin",
           "action"
         ]
       }
@@ -130,17 +129,8 @@ var FORMSCHEMA = ["*"];
 var testOptions = {
   "interval": "500",
   "components": [{
-    "name": "Led_Pin_13",
-    "action": "digitalWrite",
-    "pin": "13"
-  }, {
-    "name": "some_sensor",
-    "action": "analogRead",
-    "pin": "3"
-  }, {
-    "name": "Servo1",
-    "action": "servo",
-    "pin": "6"
+    "name": "Some Action",
+    "action": "servo"
   }]
 };
 
@@ -305,6 +295,13 @@ if(boardReady == true){
           if(((_.has(payload, "pin")))){
             component[payload.name] = {
               "pin": payload.pin,
+              "action": payload.action
+            };
+          }
+
+          if(((_.has(payload, "address")))){
+            component[payload.name] = {
+              "address": payload.address,
               "action": payload.action
             };
           }
