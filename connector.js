@@ -21,7 +21,7 @@ var Connector = function(config) {
   conx.on('notReady', function(data) {
     if(config.uuid == "uuid-here"){
       conx.register({
-        "type": "edison"
+        "type": "device:edison"
       }, function(data) {
         config.uuid = data.uuid;
         config.token = data.token;
@@ -29,6 +29,9 @@ var Connector = function(config) {
           if (err) return;
         });
       });
+
+      var claim = 'https://app.octoblu.com/node-wizard/claim/' + config.uuid + '/' + config.token;
+      console.log("CLAIM THIS DEVICE! -> ", claim);
 
       conx.authenticate({
         "uuid": config.uuid,
@@ -45,6 +48,8 @@ var Connector = function(config) {
   }
 
   conx.on('ready', function(){
+    var claim = 'https://app.octoblu.com/node-wizard/claim/' + config.uuid + '/' + config.token;
+    console.log("CLAIM THIS DEVICE IF YOU HAVEN'T! -> ", claim);
     conx.whoami({uuid: config.uuid}, function(device){
       plugin.setOptions(device.options || plugin.options);
       conx.update({

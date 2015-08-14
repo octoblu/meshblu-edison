@@ -1,7 +1,7 @@
 {
   "name": "meshblu-edison",
   "repository": "octoblu/meshblu-edison",
-  "version": "3.0.8",
+  "version": "3.1.1",
   "main": "main.js",
   "scripts": {
     "start": "node command.js",
@@ -10,7 +10,7 @@
   "dependencies": {
     "debug": "^2.1.3",
     "meshblu": "^1.9.0",
-    "johnny-five": "^0.8.58",
+    "johnny-five": "^0.8.86",
     "oled-font-5x7": "^1.0.0",
     "oled-js": "^3.1.1",
     "underscore": "^1.8.3",

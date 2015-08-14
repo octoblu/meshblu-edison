@@ -3,7 +3,6 @@
 var fs = require("fs");
 
 
-
 fs.stat('meshblu.json', function(err, stat) {
   if(err == null) {
     console.log('File exists');

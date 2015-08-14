@@ -21,6 +21,7 @@ var oled = [];
 var accel = [];
 var lcd = [];
 var prevData = {};
+var values = {};
 
 var map = [];
 var action_map = [];
@@ -393,10 +394,10 @@ if(boardReady == true){
                   address: addr
                 });
                 accel[payload.name].on("data", function(err, data) {
-                  var values = {};
-                  values[accel] = {"x": this.accelerometer.x , "y": this.accelerometer.y, "z": this.accelerometer.z};
-                  values[gyro] = {"x": this.gyro.x , "y": this.gyro.y, "z": this.gyro.z};
-                  values[temp] = {"temperature" : this.temperature.celsius};
+                  values = {};
+                  values["accel"] = {"x": this.accelerometer.x , "y": this.accelerometer.y, "z": this.accelerometer.z};
+                  values["gyro"] = {"x": this.gyro.x , "y": this.gyro.y, "z": this.gyro.z};
+                  values["temp"] = {"temperature" : this.temperature.celsius};
                   read[payload.name] = values;
                 });
                 break;
@@ -593,7 +594,7 @@ Plugin.prototype.setOptions = function(options){
 Plugin.prototype.Read = function(){
 var self = this;
 
-var interval = parseInt(self.options.interval) || 500;
+var interval = parseInt(self.options.interval) || 1000;
 
 debug("interval is:", interval);
 
