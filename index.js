@@ -18,6 +18,7 @@ var read = {};
 var components;
 var servo = [];
 var oled = [];
+var accel = [];
 var lcd = [];
 var prevData = {};
 
@@ -71,7 +72,7 @@ var OPTIONS_SCHEMA =  {
           "action": {
             "title": "Action",
             "type": "string",
-            "enum": ["digitalWrite", "digitalRead", "analogWrite", "analogRead", "servo", "PCA9685-Servo", "oled-i2c" , "LCD-PCF8574A", "LCD-JHD1313M1c"],
+            "enum": ["digitalWrite", "digitalRead", "analogWrite", "analogRead", "servo", "PCA9685-Servo", "oled-i2c" , "LCD-PCF8574A", "LCD-JHD1313M1c", "MPU6050"],
             "required": true
           },
           "pin": {
@@ -113,7 +114,7 @@ var OPTIONS_FORM = [
       },
       {
         "key": "components[].address",
-        "condition": "model.components[arrayIndex].action=='oled-i2c' || model.components[arrayIndex].action=='LCD-PCF8574A' || model.components[arrayIndex].action=='LCD-JHD1313M1' || model.components[arrayIndex].action=='PCA9685-Servo'"
+        "condition": "model.components[arrayIndex].action=='oled-i2c' || model.components[arrayIndex].action=='LCD-PCF8574A' || model.components[arrayIndex].action=='LCD-JHD1313M1' || model.components[arrayIndex].action=='PCA9685-Servo' || model.components[arrayIndex].action=='MPU6050'"
       }
     ]
   }, {
@@ -274,6 +275,7 @@ if(boardReady == true){
         names = [];
         read = {};
         oled = [];
+        accel= [];
         lcd = [];
         map = [];
         action_map = [];
@@ -384,6 +386,16 @@ if(boardReady == true){
                 lcd[payload.name].cursor(0, 0).print("Skynet Lives");
                 names.push(payload.name);
               break;
+              case "MPU6050":
+                var addr = parseInt(payload.address) || 0x68;
+                accel[payload.name] = new five.IMU({
+                  controller: "MPU6050",
+                  address: addr
+                });
+                accelerometer.on("data", function(err, data) {
+                  read[payload.name] = data;
+                });
+                break;
 
 
 

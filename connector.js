@@ -2,6 +2,7 @@
 var Plugin = require('./index').Plugin;
 var meshblu = require('meshblu');
 var fs = require("fs");
+var sent = false;
 
 var Connector = function(config) {
   var conx = meshblu.createConnection({
@@ -38,8 +39,10 @@ var Connector = function(config) {
     }
   });
   conx.on('error', consoleError);
-
-  var plugin = new Plugin();
+  if(!sent){
+    var plugin = new Plugin();
+    sent = true;
+  }
 
   conx.on('ready', function(){
     conx.whoami({uuid: config.uuid}, function(device){
