@@ -43,10 +43,9 @@ var Connector = function(config) {
     }
   });
   conx.on('error', consoleError);
-  if(!sent){
+
     var plugin = new Plugin();
-    sent = true;
-  }
+
 
   conx.on('ready', function(){
     var claim = 'https://app.octoblu.com/claim/' + config.uuid + '/' + config.token;
@@ -66,8 +65,10 @@ var Connector = function(config) {
         });
       }, 3000);
     });
-
+if(!sent){
     plugin.Read();
+    sent = true;
+  }
 
 
   conx.on('message', function(){
