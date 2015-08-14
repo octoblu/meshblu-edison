@@ -1,6 +1,7 @@
 'use strict';
 var Plugin = require('./index').Plugin;
 var meshblu = require('meshblu');
+var fs = require("fs");
 
 var Connector = function(config) {
   var conx = meshblu.createConnection({
@@ -21,7 +22,6 @@ var Connector = function(config) {
       conx.register({
         "type": "edison"
       }, function(data) {
-        debug('registered device', data);
         config.uuid = data.uuid;
         config.token = data.token;
         fs.writeFile('meshblu.json', JSON.stringify(config), function(err) {
@@ -33,7 +33,7 @@ var Connector = function(config) {
         "uuid": config.uuid,
         "token": config.token
       }, function(data) {
-        debug('authenticating', data);
+
       });
     }
   });
