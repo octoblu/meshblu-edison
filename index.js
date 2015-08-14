@@ -393,7 +393,11 @@ if(boardReady == true){
                   address: addr
                 });
                 accel[payload.name].on("data", function(err, data) {
-                  read[payload.name] = data;
+                  var values = {};
+                  values[accel] = {"x": this.accelerometer.x , "y": this.accelerometer.y, "z": this.accelerometer.z};
+                  values[gyro] = {"x": this.gyro.x , "y": this.gyro.y, "z": this.gyro.z};
+                  values[temp] = {"temperature" : this.temperature.celsius};
+                  read[payload.name] = values;
                 });
                 break;
 
