@@ -392,7 +392,7 @@ if(boardReady == true){
                   controller: "MPU6050",
                   address: addr
                 });
-                accelerometer.on("data", function(err, data) {
+                accel[payload.name].on("data", function(err, data) {
                   read[payload.name] = data;
                 });
                 break;
