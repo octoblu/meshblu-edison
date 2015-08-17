@@ -76,15 +76,11 @@ var OPTIONS_SCHEMA =  {
             "enum": ["digitalWrite", "digitalRead", "analogWrite", "analogRead", "servo", "servo-continuous", "PCA9685-Servo", "oled-i2c" , "LCD-PCF8574A", "LCD-JHD1313M1c", "MPU6050"],
             "required": true
           },
-          "pin": {
+          "pin or address": {
             "title": "Pin",
             "type": "string",
             "description": "Pin used for this component"
-          },  "address": {
-              "title": "address",
-              "type": "string",
-              "description": "i2c address used for this component"
-            }
+          }
 
         },
         "required": [
@@ -297,7 +293,7 @@ if(boardReady == true){
           debug(payload);
 
           if((!(_.has(payload, "pin")))){
-            if(!(_.has(payload, "address"))){
+            if(!(_.has(payload, "pin"))){
               return;
             }
           }
@@ -309,12 +305,14 @@ if(boardReady == true){
             };
           }
 
-          if(((_.has(payload, "address")))){
+  /*        if(((_.has(payload, "address")))){
             component[payload.name] = {
               "address": payload.address,
               "action": payload.action
             };
-          }
+          } */
+
+          payload.address = payload.pin;
 
           console.log(component);
           switch (payload.action) {
