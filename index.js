@@ -60,7 +60,6 @@ var OPTIONS_SCHEMA =  {
     },
     "components": {
       "type": "array",
-      "maxItems": 2,
       "items": {
         "type": "object",
         "properties": {
