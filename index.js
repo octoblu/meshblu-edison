@@ -77,16 +77,16 @@ var OPTIONS_SCHEMA =  {
             "required": true
           },
           "pin": {
-            "title": "Pin or Address",
+            "title": "Pin",
             "type": "string",
             "description": "Pin used for this component"
-          }
+          },  "address": {
+              "title": "address",
+              "type": "string",
+              "description": "i2c address used for this component"
+            }
 
-        },
-        "required": [
-          "name",
-          "action"
-        ]
+        }
       }
     }
   }
@@ -293,7 +293,7 @@ if(boardReady == true){
           debug(payload);
 
           if((!(_.has(payload, "pin")))){
-            if(!(_.has(payload, "pin"))){
+            if(!(_.has(payload, "address"))){
               return;
             }
           }
@@ -305,14 +305,12 @@ if(boardReady == true){
             };
           }
 
-  /*        if(((_.has(payload, "address")))){
+          if(((_.has(payload, "address")))){
             component[payload.name] = {
               "address": payload.address,
               "action": payload.action
             };
-          } */
-
-          payload.address = payload.pin;
+          }
 
           console.log(component);
           switch (payload.action) {
