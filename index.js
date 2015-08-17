@@ -73,19 +73,17 @@ var OPTIONS_SCHEMA =  {
           "action": {
             "title": "Action",
             "type": "string",
-            "enum": ["digitalWrite", "digitalRead", "analogWrite", "analogRead", "servo", "PCA9685-Servo", "oled-i2c" , "LCD-PCF8574A", "LCD-JHD1313M1c", "MPU6050"],
+            "enum": ["digitalWrite", "digitalRead", "analogWrite", "analogRead", "servo", "servo-continuous", "PCA9685-Servo", "oled-i2c" , "LCD-PCF8574A", "LCD-JHD1313M1c", "MPU6050"],
             "required": true
           },
           "pin": {
             "title": "Pin",
             "type": "string",
-            "description": "Pin used for this component",
-            "required": true
+            "description": "Pin used for this component"
           },  "address": {
               "title": "address",
               "type": "string",
-              "description": "i2c address used for this component",
-              "required": true
+              "description": "i2c address used for this component"
             }
 
         },
@@ -111,7 +109,7 @@ var OPTIONS_FORM = [
       "components[].action",
       {
         "key": "components[].pin",
-        "condition": "model.components[arrayIndex].action=='digitalRead' || model.components[arrayIndex].action=='digitalWrite' || model.components[arrayIndex].action=='analogRead' || model.components[arrayIndex].action=='analogWrite' || model.components[arrayIndex].action=='servo'"
+        "condition": "model.components[arrayIndex].action=='digitalRead' || model.components[arrayIndex].action=='digitalWrite' || model.components[arrayIndex].action=='analogRead' || model.components[arrayIndex].action=='analogWrite' || model.components[arrayIndex].action=='servo', || model.components[arrayIndex].action=='analogRead' || model.components[arrayIndex].action=='analogWrite' || model.components[arrayIndex].action=='servo-continuous'"
       },
       {
         "key": "components[].address",
@@ -198,6 +196,15 @@ debug(component[payload.name]);
           servo.sweep([payload.sweep.min, payload.sweep.max]);
         }else if(payload.servo_action == "stop"){
           servo[payload.name].stop();
+        }
+        break;
+      case "servo-continuous":
+        if(payload.direction == "stop"){
+          servo[payload.name].stop();
+        }else if(payload.direction == "CW"){
+          servo[payload.name].cw();
+        }else if(payload.direction == "CCW"){
+          servo[payload.name].ccw();
         }
         break;
       case "PCA9685-Servo":
@@ -345,12 +352,17 @@ if(boardReady == true){
               });
               names.push(payload.name);
               break;
+            case "servo-continuous":
+              servo[payload.name] = new five.Servo.Continuous(parseInt(payload.pin)).stop();
+              names.push(payload.name);
+              break;
+
             case "PCA9685-Servo":
               var address = parseInt(payload.address) || 0x40;
               servo[payload.name] = new five.Servo({
                 address: address,
                 controller: "PCA9685",
-                pin: payload.pin,
+                pin: payload.pin
               });
               names.push(payload.name);
             case "oled-i2c":
@@ -415,6 +427,7 @@ if(boardReady == true){
       var digital_ = [];
       var analog_ = [];
       var text_ = [];
+      var continuous_ = [];
 
       for(var i = 0; i < names.length; i++){
 
@@ -431,6 +444,8 @@ if(boardReady == true){
               servo_.push(name);
             }else if(component[name].action == "digitalWrite"){
               digital_.push(name);
+            }else if(component[name].action == "servo-continuous"){
+              continuous_.push(name);
             }else if(component[name].action == "analogWrite"){
               analog_.push(name);
             }else{
@@ -444,6 +459,7 @@ if(boardReady == true){
             var digital_condition =  "model.component == 'aNeverEndingSchema'";
             var analog_condition =  "model.component == 'aNeverEndingSchema'";
             var text_condition =  "model.component == 'aNeverEndingSchema'";
+            var servoc_condition =  "model.component == 'aNeverEndingSchema'";
 
           if(servo_ !== undefined){
                 for(var i = 0; i < servo_.length; i++){
@@ -481,6 +497,15 @@ if(boardReady == true){
                         }
                     }
                   }
+                  if(continuous_ !== undefined){
+                            for(var i = 0; i < continuous_.length; i++){
+                              if(i == 0){
+                                servoc_condition = "model.component == '" + continuous_[i] + "'";
+                              }else{
+                                servoc_condition = servoc_condition + " || model.component == '" + continuous_[i] + "'";
+                              }
+                          }
+                        }
 
 
       MESSAGE_SCHEMA = {
@@ -497,6 +522,11 @@ if(boardReady == true){
           "value": {
             "title": "Value",
             "type": "number"
+          },
+          "direction": {
+            "title": "Direction",
+            "type": "string",
+            "enum": ["CW", "CCW", "STOP"]
           },
           "text": {
             "title": "Text",
@@ -553,7 +583,10 @@ if(boardReady == true){
        },
        {"key": "text",
         "condition": text_condition
-       }
+      },
+      {"key": "direction",
+       "condition": servoc_condition
+      }
      ];
 
 
