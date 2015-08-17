@@ -76,8 +76,8 @@ var OPTIONS_SCHEMA =  {
             "enum": ["digitalWrite", "digitalRead", "analogWrite", "analogRead", "servo", "servo-continuous", "PCA9685-Servo", "oled-i2c" , "LCD-PCF8574A", "LCD-JHD1313M1c", "MPU6050"],
             "required": true
           },
-          "pin or address": {
-            "title": "Pin",
+          "pin": {
+            "title": "Pin or Address",
             "type": "string",
             "description": "Pin used for this component"
           }
