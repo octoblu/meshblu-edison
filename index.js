@@ -78,11 +78,13 @@ var OPTIONS_SCHEMA =  {
           "pin": {
             "title": "Pin",
             "type": "string",
-            "description": "Pin used for this component"
+            "description": "Pin used for this component",
+            "required": false
           },  "address": {
               "title": "address",
               "type": "string",
-              "description": "i2c address used for this component"
+              "description": "i2c address used for this component",
+              "required": false
             }
 
         }
@@ -164,15 +166,22 @@ Plugin.prototype.StartBoard = function(device){
 }
 
 Plugin.prototype.onMessage = function(message){
+  debug(message);
   var payload = message.payload;
       payload.name = payload.component;
-    if (!component[payload.name])
-      return;
+    if (!component[payload.name]){
+      return;}
 
+  debug(payload);
 debug(component[payload.name]);
     switch (component[payload.name].action) {
       case "digitalWrite":
-        var value = parseInt(payload.state);
+        var value;
+        if(payload.state == "0"){
+          value = 0;
+        }else if(payload.state == "1"){
+          value = 1;
+        }
         board.digitalWrite(component[payload.name].pin, value);
         break;
       case "analogWrite":
@@ -222,22 +231,13 @@ debug(component[payload.name]);
         oled[payload.name].writeString(font, 3, payload.text , 1, true);
         break;
         case "LCD-PCF8574A":
+            debug("SPEAK", payload.text);
             lcd[payload.name].clear();
-            if(payload.text.length <= 16){
-            lcd[payload.name].cursor(0,0).noAutoscroll().print(payload.text);
-          }else if (payload.text.length > 16){
-            lcd[payload.name].cursor(0,0).print(payload.text.substring(0,16));
-            lcd[payload.name].cursor(1,0).print(payload.text.substring(16,33));
-          }
+            lcd[payload.name].cursor(0, 0).print(payload.text);
           break;
         case "LCD-JHD1313M1":
-            lcd[payload.name].clear();
-            if(payload.text.length <= 16){
-            lcd[payload.name].cursor(0,0).noAutoscroll().print(payload.text);
-          }else if (payload.text.length > 16){
-            lcd[payload.name].cursor(0,0).print(payload.text.substring(0,16));
-            lcd[payload.name].cursor(1,0).print(payload.text.substring(16,33));
-          }
+        lcd[payload.name].clear();
+        lcd[payload.name].cursor(0, 0).print(payload.text);
           break;
     } //end switch case
 };
@@ -282,6 +282,7 @@ if(boardReady == true){
         lcd = [];
         map = [];
         action_map = [];
+
         if (_.has(data.options, "components")) {
           components = data.options.components;
         } else {
@@ -319,7 +320,7 @@ if(boardReady == true){
               board.digitalRead(payload.pin, function(value) {
                 if(_.has(component, payload.name)){
                 read[payload.name] = value;
-                debug(value);
+                //debug(value);
                 }
               });
 
@@ -630,7 +631,7 @@ setInterval(function() {
 
 
     if (!(_.isEmpty(read))) {
-      debug(read);
+    //  debug(read);
 
       self.emit('message',{
         "devices": "*",
