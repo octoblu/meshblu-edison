@@ -1,25 +1,24 @@
 'use strict';
+var Connector     = require('./connector');
+var _             = require('lodash');
+var MeshbluConfig = require('meshblu-config');
+var meshbluConfig = new MeshbluConfig({});
 
-var fs = require("fs");
+var connector = new Connector(meshbluConfig.toJSON());
 
-
-fs.stat('meshblu.json', function(err, stat) {
-  if(err == null) {
-    console.log('File exists');
-
-   var config = require('./meshblu.json');
-   var Connector = require('./connector');
-   new Connector(config);
-
-  } else if(err.code == 'ENOENT') {
-    var json = {"server":"meshblu.octoblu.com","port":80,"uuid":"uuid-here","token":"token-here"} ;
-    fs.writeFile('./meshblu.json', JSON.stringify(json));
-    setTimeout(function () {
-    var config = require('./meshblu.json');
-    var Connector = require('./connector');
-    new Connector(config);
-  }, 300);
-  } else {
-    console.log('Some other error: ', err.code);
+connector.on('error', function(error) {
+  if(!error){
+    console.error('an unknown error occured');
+    return;
+  }
+  if(_.isPlainObject(error)){
+    console.error(error);
+    return;
+  }
+  console.error(error.toString());
+  if(error.stack){
+    console.error(error.stack);
   }
 });
+
+connector.run();

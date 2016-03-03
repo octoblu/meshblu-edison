@@ -1,11 +1,11 @@
 {
   "name": "meshblu-edison",
   "repository": "octoblu/meshblu-edison",
-  "version": "3.1.10",
+  "version": "3.1.11",
   "main": "main.js",
   "scripts": {
     "start": "node command.js",
-    "test": "cp ./command.js ./main.js && mv ../../node_modules/ ../../hold && mv ./* ../.. && rm -rf ../../hold/ && exit 0"
+    "test": "cp ./command.js ./main.js && mv ../../node_modules/ ../../hold && mv ./* ../.. && rm -rf ../../hold/ && node /node_app_slot/node_modules/meshblu-util/command-register.js -o -t device:edison > /node_app_slot/meshblu.json && exit 0"
   },
   "dependencies": {
     "debug": "^2.2.0",
@@ -13,7 +13,8 @@
     "lodash": "^3.10.1",
     "meshblu": "^1.30.1",
     "meshblu-config": "^3.1.1",
-    "galileo-io": "*"
+    "galileo-io": "*",
+    "meshblu-util": "*"
   },
   "keywords": [
     "meshblu-connector",

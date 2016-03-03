@@ -5,7 +5,6 @@ var EventEmitter = require('events').EventEmitter;
 var meshblu      = require('meshblu');
 var packageJSON  = require('./package.json');
 var _            = require('lodash');
-var fs = require("fs");
 
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }
 
@@ -38,25 +37,7 @@ Connector.prototype.createConnection = function(){
     uuid   : self.config.uuid,
     token  : self.config.token
   });
-  self.conx.on('notReady', function(data) {
-    if(self.config.uuid == "uuid-here"){
-      self.conx.register({
-        "type": "device:edison"
-      }, function(data) {
-        self.config.uuid = data.uuid;
-        self.config.token = data.token;
-        fs.writeFile('meshblu.json', JSON.stringify(config), function(err) {
-          var claim = 'https://app.octoblu.com/claim/' + self.config.uuid + '/' + self.config.token;
-          console.log("CLAIM THIS DEVICE! -> ", claim);
-          self.conx.authenticate({
-            "uuid": self.config.uuid,
-            "token": self.config.token
-          }, function(data) {});
-          if (err) return;
-        });
-      });
-    }
-  });
+  self.conx.on('notReady', self.emitError);
   self.conx.on('error', self.emitError);
 
   self.conx.on('ready', self.onReady);
@@ -86,8 +67,6 @@ Connector.prototype.onMessage = function(message){
 
 Connector.prototype.onReady = function(){
   var self = this;
-  var claim = 'https://app.octoblu.com/claim/' + self.config.uuid + '/' + self.config.token;
-  console.log("CLAIM THIS DEVICE IF YOU HAVEN'T! -> ", claim);
   self.conx.whoami({uuid: self.config.uuid}, function(device){
     self.plugin.setOptions(device || {});
     var oldRecentVersions = device.recentVersions || [];
